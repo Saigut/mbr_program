@@ -27,8 +27,8 @@ qemu-system-i386 -hda build/mbr_program.bin
 ## 调试工具
 ```
 objdump -d xxx
-objdump -D -b binary -mi386 -Maddr16,data16 ./build/boot.bin
-ndisasm -b16 -o7c00h ./build/boot.bin
+objdump -D -b binary -mi386 -Maddr16,data16 ./build/mbr_program.bin
+ndisasm -b16 -o7c00h ./build/mbr_program.bin
 hexdump xxx
 xxd -p xxx
 file xxx

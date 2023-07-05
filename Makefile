@@ -1,8 +1,8 @@
 # Variables
 CC = gcc
-CFLAGS = -m16 -O0 -ffreestanding -Wall -Wextra -fno-pic
+CFLAGS = -m16 -march=i686 -O0 -ffreestanding -static -nostdlib -mmanual-endbr -Wall -Wextra -fno-pic
 LD = ld
-LDFLAGS = -m elf_i386 -T link_script.ld
+LDFLAGS = -m elf_i386 -static -T link_script.ld -nostdlib --nmagic
 OBJCOPY = objcopy
 BUILDDIR = build
 
