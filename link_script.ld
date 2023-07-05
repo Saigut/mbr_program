@@ -1,17 +1,12 @@
-ENTRY(_start)
+ENTRY(main_func)
   
 SECTIONS
 {
     . = 0x7C00;    /* 加载地址 */
 
-    .text : AT(0x7C00)   /* 确保 .text 节在文件的开始 */
+    .text : AT(0x7C00)    /* text 段位置 */
     {
         *(.text)
-    }
-
-    .kernel : AT(0x7C0F)    /* kernel 位置 */
-    {
-        *(.kernel)
     }
 
     .sig : AT(0x7DFE)    /* 引导扇区签名位置 */

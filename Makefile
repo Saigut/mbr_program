@@ -1,30 +1,34 @@
 # Variables
-CC = x86_64-elf-gcc
-CFLAGS = -m32 -std=gnu99 -ffreestanding -Wall -Wextra -fno-pic
-LD = x86_64-elf-ld
-LDFLAGS = -m elf_i386 -T linker.ld
-OBJCOPY = x86_64-elf-objcopy
-NASM = nasm
-NASMFLAGS = -f elf32
+CC = gcc
+CFLAGS = -m16 -O0 -ffreestanding -Wall -Wextra -fno-pic
+LD = ld
+LDFLAGS = -m elf_i386 -T link_script.ld
+OBJCOPY = objcopy
+BUILDDIR = build
+
+# Custom build settings. build_settings.mk file is optional
+ifeq ($(wildcard build_settings.mk),build_settings.mk)
+    include build_settings.mk
+endif
 
 # Default target
-all: boot.bin
+all: $(BUILDDIR) $(BUILDDIR)/mbr_program.bin
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+
+# Compile
+$(BUILDDIR)/mbr_program.o: mbr_program.c
+	$(CC) $(CFLAGS) -c mbr_program.c -o $(BUILDDIR)/mbr_program.o
 
 # Link
-boot.elf: bootloader.o kernel.o linker.ld
-	$(LD) $(LDFLAGS) bootloader.o kernel.o -o boot.elf
+$(BUILDDIR)/mbr_program.elf: $(BUILDDIR)/mbr_program.o link_script.ld
+	$(LD) $(LDFLAGS) $(BUILDDIR)/mbr_program.o -o $(BUILDDIR)/mbr_program.elf
 
-boot.bin: boot.elf
-	$(OBJCOPY) -O binary boot.elf boot.bin
-
-# Compile C
-kernel.o: kernel.c
-	$(CC) $(CFLAGS) -c kernel.c -o kernel.o
-
-# Compile ASM
-bootloader.o: bootloader.asm
-	$(NASM) $(NASMFLAGS) bootloader.asm -o bootloader.o
+# Objcopy
+$(BUILDDIR)/mbr_program.bin: $(BUILDDIR)/mbr_program.elf
+	$(OBJCOPY) -O binary $(BUILDDIR)/mbr_program.elf $(BUILDDIR)/mbr_program.bin
 
 # Clean
 clean:
-	rm -f *.o boot.bin
+	rm -rf $(BUILDDIR)

@@ -1,0 +1,8 @@
+.idea/
+
+*.o
+*.elf
+*.bin
+
+build/
+build_settings.mk
