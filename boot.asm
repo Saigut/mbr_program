@@ -1,24 +1,22 @@
-[bits 16]
-[section .text]
+org 0x7c00
 
-section .text
-global main_func
+mov ax, cs
+mov ds, ax
+mov es, ax
 
-main_func:
-mov ah, 0
-mov al, 0x13
-int 0x10
+call dispstr
+jmp $
 
-mov bx, 0xa000
-mov ds, bx
+dispstr:
+    mov ax, 0x1301
+    mov bx, 0x000c
+    mov cx, 55
+    mov dx, 0x1010
+    mov bp, BootMessage
+    int 0x10
+    ret
 
-mov bx, 0
-mov cx, 64000
-begin:
-mov [ds:bx], bh
-inc bx
-loop begin
+BootMessage: db "!abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ!", 0
 
-end:
-hlt
-jmp end
+times 510-($-$$) db 0
+dw 0xaa55

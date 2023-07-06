@@ -1,6 +1,6 @@
 # Variables
 CC = gcc
-CFLAGS = -m16 -march=i686 -O0 -ffreestanding -static -nostdlib -mmanual-endbr -Wall -Wextra -fno-pic
+CFLAGS = -m16 -march=i386 -O0 -ffreestanding -fomit-frame-pointer -nostdlib -mmanual-endbr -static -Wall -Wextra -fno-pic
 LD = ld
 LDFLAGS = -m elf_i386 -static -T link_script.ld -nostdlib --nmagic
 OBJCOPY = objcopy

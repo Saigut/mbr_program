@@ -1,15 +1,14 @@
-#ifndef _CODE16GCC_H_
-#define _CODE16GCC_H_
-__asm__(".code16gcc\n");
-#endif
-
 #include <stdint.h>
 
-void print_str(const char* str);
+
+#define REGPARM __attribute__ ((regparm(3)))
+#define SECTION(s) __attribute__((section(s)))
+
+REGPARM void print_str(const char* str);
 void print_block();
 void sleep_one_second();
 
-__attribute__((section(".text"))) void main_func()
+SECTION(".text") void main_func()
 {
     const char* message = "Hello, World!\n";
     print_str(message);
@@ -21,20 +20,23 @@ __attribute__((section(".text"))) void main_func()
     }
 }
 
-void print_str(const char* str)
+REGPARM void print_str(const char* str)
 {
-    while (*str) {
+    int i = 0;
+    while (*str && i < 32) {
         asm volatile (
-                "movb %0, %%al\n"
+                "mov %0, %%ebx\n"
+                "movb 0x0000(%%bx), %%al\n"
                 "movb $0x0E, %%ah\n"
                 "movb $0x00, %%bh\n"
                 "movb $0x07, %%bl\n"
                 "int $0x10\n"
                 :
-                : "r" (*str)
+                : "r" (str)
                 : "%ah", "%bh", "%bl"
                 );
         str++;
+        i++;
     }
 }
 
