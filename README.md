@@ -14,8 +14,8 @@ make
 ```
 手动命令：
 ```
-gcc -m16 -O0 -ffreestanding -Wall -Wextra -fno-pic -c mbr_program.c -o build/mbr_program.o
-ld -m elf_i386 -T link_script.ld mbr_program.o -o build/mbr_program.elf
+gcc -m16 -march=i386 -O0 -ffreestanding -fomit-frame-pointer -mmanual-endbr -static -Wall -Wextra -fno-pic -c mbr_program.c -o build/mbr_program.o
+ld -m elf_i386 -T link_script.ld -nostdlib --nmagic mbr_program.o -o build/mbr_program.elf
 objcopy -O binary mbr_program.elf build/mbr_program.bin
 ```
 
