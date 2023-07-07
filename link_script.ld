@@ -2,14 +2,14 @@ ENTRY(main_func)
   
 SECTIONS
 {
-    . = 0x7C00;    /* 加载地址 */
+    . = 0x7C00;    /* Loading address */
 
-    .text : AT(0x7C00)    /* text 段位置 */
+    .text : AT(0x7C00)    /* Position of the text section */
     {
         *(.text)
     }
 
-    .sig : AT(0x7DFE)    /* 引导扇区签名位置 */
+    .sig : AT(0x7DFE)    /* Position of the boot sector signature */
     {
         SHORT(0xAA55)
     }
@@ -20,5 +20,5 @@ SECTIONS
         *(.comment)
     }
 
-    . = 0x7E00;  /* 确保我们有 512 字节的空间 */
+    . = 0x7E00;  /* Ensuring that we have 512 bytes of space */
 }
