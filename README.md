@@ -7,6 +7,7 @@ Write an MBR program using the C programming language
 
 ## 环境
 * x86 cpu
+* 支持 x86 的 gcc、ld、objcopy 等工具（一般 Unix/类Unix 系统才有）
 
 ## 编译
 ```
