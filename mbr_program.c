@@ -20,8 +20,7 @@ void init_func() {
 void print_char(char c);
 void print_str(const char* str);
 void print_san_lian(char *bx);
-void print_color();
-void sleep_1s();
+void sleep();
 
 SECTION(".text")
 void main_func()
@@ -29,8 +28,7 @@ void main_func()
     const char* message = "Hello, World!";
     print_str(message);
 
-    sleep_1s();
-    sleep_1s();
+    sleep();
     char san_lian[] = {
             0x01, 0x00,
             0x01, 0x00,
@@ -52,10 +50,6 @@ void main_func()
             0x00
     };
     print_san_lian(san_lian);
-
-    sleep_1s();
-    sleep_1s();
-    print_color();
 
     while(1) {
         asm volatile ("hlt");
@@ -82,21 +76,6 @@ void print_str(const char* str)
         print_char(*str);
         str++;
     }
-//    asm volatile (
-//            "movw %%bx, %%si\n"
-//            "1:\n"
-//            "lodsb\n"
-//            "cmpb $0, %%al\n"
-//            "je 2f\n"
-//            "movb $0xe, %%ah\n"
-//            "movw $0x0001, %%bx\n"
-//            "int $0x10\n"
-//            "jmp 1b\n"
-//            "2:\n"
-//            :
-//            : "b" (str)
-//            : "%ah", "%al"
-//            );
 }
 
 void print_san_lian(char *bx)
@@ -128,52 +107,16 @@ void print_san_lian(char *bx)
     }
 }
 
-// Roughly 1 second, not precise
-void sleep_1s() {
+// Roughly 2 second, not precise
+void sleep() {
     asm volatile (
             "movb $0x86, %%ah;"   /* BIOS Wait */
             "xorw %%bx, %%bx;"    /* Clear BX */
-            "movw $0x09, %%cx;"   /* High word of delay */
+            "movw $0x13, %%cx;"   /* High word of delay */
             "movw $0x27c0, %%dx;" /* Low word of delay (eg: cx:dx = 0x0F * 2^16 + 0x4240 = 1,000,000 microseconds or 1 second) */
             "int $0x15;"          /* BIOS interrupt */
             :
             :
             : "%bx", "%cx", "%dx", "%ah"
             );
-}
-
-void print_color()
-{
-    uint8_t color;
-    uint16_t i = 0;
-
-    // setup vga
-    asm volatile (
-        // setup interrupt of vga
-            "mov $0, %%ah\n"
-            "mov $0x13, %%al\n"
-            "int $0x10\n"
-
-            // set address of vga
-            "mov $0xa000, %%bx\n"
-            "mov %%bx, %%ds\n"
-            :
-            :
-            : "%ax", "%bx"
-            );
-
-    // draw
-    while (i < 64000) {
-        color = i >> 8;
-        asm volatile (
-            // draw color
-                "mov %0, %%al\n"
-                "mov %1, %%bx\n"
-                "mov %%al, %%ds:(%%bx)\n"
-                :
-                : "r" (color), "r" (i)
-                : "%ax", "%bx"
-                );
-        i++;
-    }
 }
